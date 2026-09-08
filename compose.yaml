@@ -1,0 +1,21 @@
+services:
+  calendar-mcp:
+    build: .
+    environment:
+      CALENDAR_TEST_API_ENABLED: "true"
+      CALENDAR_TEST_API_KEY: ${CALENDAR_TEST_API_KEY:?set CALENDAR_TEST_API_KEY}
+      CALENDAR_MCP_ALLOWED_HOSTS: '["calendar-mcp:*","127.0.0.1:*","localhost:*"]'
+      CALENDAR_OIDC_JWKS_URL: http://host.docker.internal:8081/realms/portable-agent/protocol/openid-connect/certs
+    ports:
+      - "127.0.0.1:18082:8080"
+    healthcheck:
+      test:
+        [
+          "CMD",
+          "python",
+          "-c",
+          "import urllib.request; urllib.request.urlopen('http://localhost:8080/health', timeout=2)",
+        ]
+      interval: 5s
+      timeout: 3s
+      retries: 10

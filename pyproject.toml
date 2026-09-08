@@ -1,0 +1,50 @@
+[project]
+name = "portable-agent-calendar-mcp"
+version = "0.1.0"
+description = "MCP calendar service for Portable Agent"
+readme = "README.md"
+requires-python = ">=3.14"
+license = "Apache-2.0"
+dependencies = [
+  "fastapi==0.141.1",
+  "mcp==2.0.0",
+  "PyJWT[crypto]>=2.13,<3",
+  "pydantic-settings>=2.10,<3",
+  "tzdata>=2026.1,<2027",
+  "uvicorn[standard]>=0.35,<1",
+]
+
+[dependency-groups]
+dev = [
+  "httpx>=0.28,<1",
+  "mkdocs>=1.6,<2",
+  "mkdocs-material>=9.6,<10",
+  "mypy>=1.17,<2",
+  "pytest>=8.4,<9",
+  "pytest-cov>=6.2,<8",
+  "ruff>=0.12,<1",
+]
+
+[build-system]
+requires = ["hatchling>=1.27,<2"]
+build-backend = "hatchling.build"
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/portable_agent_calendar"]
+
+[tool.ruff]
+target-version = "py314"
+line-length = 100
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "N", "UP", "B", "SIM", "RUF", "ASYNC"]
+
+[tool.mypy]
+python_version = "3.14"
+strict = true
+files = ["src", "tests"]
+
+[tool.pytest.ini_options]
+addopts = "--strict-markers --cov=portable_agent_calendar --cov-report=term-missing --cov-fail-under=90"
+testpaths = ["tests"]
+pythonpath = ["src"]

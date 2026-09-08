@@ -1,0 +1,27 @@
+name: CI
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+permissions:
+  contents: read
+
+jobs:
+  python:
+    uses: portable-agent/.github/.github/workflows/reusable-python.yml@ed34f26071893063cf70bcd5c784d15d6c4fb5b7
+    with:
+      python-version: "3.14"
+  docs:
+    uses: portable-agent/.github/.github/workflows/reusable-docs.yml@ed34f26071893063cf70bcd5c784d15d6c4fb5b7
+  container:
+    needs: [python, docs]
+    uses: portable-agent/.github/.github/workflows/reusable-container.yml@ed34f26071893063cf70bcd5c784d15d6c4fb5b7
+    permissions:
+      contents: read
+      packages: write
+      id-token: write
+      attestations: write
+    with:
+      image-name: calendar-mcp

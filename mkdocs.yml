@@ -1,0 +1,19 @@
+site_name: Calendar MCP
+site_description: Документация MCP-сервиса календаря Portable Agent
+docs_dir: docs
+strict: true
+theme:
+  name: material
+  language: ru
+nav:
+  - Главная: index.md
+  - Архитектура: architecture.md
+  - Разработка: development.md
+  - Runbook: runbook.md
+markdown_extensions:
+  - admonition
+  - pymdownx.superfences:
+      custom_fences:
+        - name: mermaid
+          class: mermaid
+          format: !!python/name:pymdownx.superfences.fence_code_format
