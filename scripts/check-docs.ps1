@@ -13,17 +13,17 @@ $requiredFiles = @(
 
 $missingFiles = $requiredFiles | Where-Object { -not (Test-Path -LiteralPath $_ -PathType Leaf) }
 if ($missingFiles.Count -gt 0) {
-    throw "Нет обязательных файлов: $($missingFiles -join ', ')"
+    throw "Missing required files: $($missingFiles -join ', ')"
 }
 
 $catalogText = Get-Content -LiteralPath "catalog-info.yaml" -Raw
 if ($catalogText -notmatch "backstage\.io/techdocs-ref:\s*dir:\.") {
-    throw "В catalog-info.yaml нет backstage.io/techdocs-ref: dir:."
+    throw "catalog-info.yaml must contain backstage.io/techdocs-ref: dir:."
 }
 
 $mkdocsText = Get-Content -LiteralPath "mkdocs.yml" -Raw
 if ($mkdocsText -notmatch "(?m)^docs_dir:\s*docs\s*$") {
-    throw "В mkdocs.yml должен быть docs_dir: docs."
+    throw "mkdocs.yml must contain docs_dir: docs."
 }
 
-Write-Host "Документация calendar-mcp соответствует стандарту."
+Write-Host "calendar-mcp documentation matches the standard."

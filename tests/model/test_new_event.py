@@ -71,6 +71,17 @@ def test_create_when_tenant_uuid_has_other_form_should_normalize_it() -> None:
     assert event.tenant_id == "81410813-f15f-4204-b9f5-53c30f465ffc"
 
 
+def test_create_when_actor_uuid_has_other_form_should_normalize_it() -> None:
+    event = replace(event_data(), actor_id="28EFC74EE82B4EA291434DC24C13FE0D")
+
+    assert event.actor_id == "28efc74e-e82b-4ea2-9143-4dc24c13fe0d"
+
+
+def test_create_when_actor_is_not_uuid_should_reject_event() -> None:
+    with pytest.raises(ValueError):
+        replace(event_data(), actor_id="not-a-uuid")
+
+
 def test_create_when_time_has_no_offset_should_reject_event() -> None:
     with pytest.raises(ValueError, match="offset"):
         replace(event_data(), start_at="2026-09-08T12:00:00")

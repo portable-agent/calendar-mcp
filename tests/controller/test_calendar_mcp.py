@@ -9,8 +9,9 @@ from portable_agent_calendar.service.calendar_service import CalendarService
 
 @pytest.mark.anyio
 async def test_create_event_when_input_is_valid_should_return_event_id() -> None:
+    repository = MemoryCalendarRepository()
     server = build_server(
-        CalendarService(MemoryCalendarRepository()),
+        CalendarService(repository),
         current_tenant=lambda: "81410813-f15f-4204-b9f5-53c30f465ffc",
     )
 
@@ -23,12 +24,15 @@ async def test_create_event_when_input_is_valid_should_return_event_id() -> None
                 "start_at": "2026-09-08T12:00:00+03:00",
                 "end_at": "2026-09-08T12:30:00+03:00",
                 "time_zone": "Europe/Moscow",
+                "actor_id": "28efc74e-e82b-4ea2-9143-4dc24c13fe0d",
             },
         )
 
     assert result.is_error is False
     assert result.structured_content is not None
     assert result.structured_content["eventId"]
+    events = await repository.find_by_request_key("request-123")
+    assert events[0].data.actor_id == "28efc74e-e82b-4ea2-9143-4dc24c13fe0d"
 
 
 @pytest.mark.anyio
@@ -50,6 +54,7 @@ async def test_list_tools_should_publish_only_create_event() -> None:
         "end_at",
         "time_zone",
     ]
+    assert "actor_id" in tool.input_schema["properties"]
     assert tool.annotations is not None
     assert tool.annotations.idempotent_hint is True
     assert tool.annotations.read_only_hint is False
