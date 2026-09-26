@@ -12,11 +12,14 @@ class NewEvent:
     start_at: str
     end_at: str
     time_zone: str
+    actor_id: str | None = None
     description: str | None = None
     attendees: tuple[str, ...] = ()
 
     def __post_init__(self) -> None:
         object.__setattr__(self, "tenant_id", str(UUID(self.tenant_id)))
+        if self.actor_id is not None:
+            object.__setattr__(self, "actor_id", str(UUID(self.actor_id)))
         self._check_text()
         self._check_attendees()
         try:
@@ -38,6 +41,7 @@ class NewEvent:
         start_at: str,
         end_at: str,
         time_zone: str,
+        actor_id: str | None = None,
         description: str | None = None,
         attendees: list[str] | None = None,
     ) -> NewEvent:
@@ -48,6 +52,7 @@ class NewEvent:
             start_at=start_at,
             end_at=end_at,
             time_zone=time_zone,
+            actor_id=actor_id,
             description=description,
             attendees=tuple(attendees or ()),
         )

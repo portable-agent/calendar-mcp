@@ -49,6 +49,7 @@ def build_server(
         start_at: str,
         end_at: str,
         time_zone: str,
+        actor_id: str | None = None,
         description: str | None = None,
         attendees: list[str] | None = None,
     ) -> EventResult:
@@ -61,6 +62,7 @@ def build_server(
                     start_at=start_at,
                     end_at=end_at,
                     time_zone=time_zone,
+                    actor_id=actor_id,
                     description=description,
                     attendees=attendees,
                 )
