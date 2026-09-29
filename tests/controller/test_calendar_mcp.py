@@ -3,6 +3,7 @@ from mcp import Client
 from mcp.types import TextContent
 
 from portable_agent_calendar.controller.calendar_mcp import build_server
+from portable_agent_calendar.provider.fake_calendar import FakeCalendar
 from portable_agent_calendar.repository.memory_calendar_repository import MemoryCalendarRepository
 from portable_agent_calendar.service.calendar_service import CalendarService
 
@@ -11,7 +12,7 @@ from portable_agent_calendar.service.calendar_service import CalendarService
 async def test_create_event_when_input_is_valid_should_return_event_id() -> None:
     repository = MemoryCalendarRepository()
     server = build_server(
-        CalendarService(repository),
+        CalendarService(FakeCalendar(repository)),
         current_tenant=lambda: "81410813-f15f-4204-b9f5-53c30f465ffc",
     )
 
@@ -38,7 +39,7 @@ async def test_create_event_when_input_is_valid_should_return_event_id() -> None
 @pytest.mark.anyio
 async def test_list_tools_should_publish_only_create_event() -> None:
     server = build_server(
-        CalendarService(MemoryCalendarRepository()),
+        CalendarService(FakeCalendar(MemoryCalendarRepository())),
         current_tenant=lambda: "81410813-f15f-4204-b9f5-53c30f465ffc",
     )
 
@@ -63,7 +64,7 @@ async def test_list_tools_should_publish_only_create_event() -> None:
 @pytest.mark.anyio
 async def test_create_event_when_time_is_invalid_should_return_safe_error() -> None:
     server = build_server(
-        CalendarService(MemoryCalendarRepository()),
+        CalendarService(FakeCalendar(MemoryCalendarRepository())),
         current_tenant=lambda: "81410813-f15f-4204-b9f5-53c30f465ffc",
     )
 

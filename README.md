@@ -8,6 +8,7 @@ MCP-сервис календаря для Portable Agent. Он принимае
 
 - официальный MCP Python SDK `2.0.0` и Streamable HTTP `/mcp`;
 - MCP tool `create_event`;
+- отдельная стратегия `FakeCalendar`, которую можно заменить без изменения use case;
 - tenant из проверенного OIDC-токена и обязательный `request_key`;
 - необязательный доверенный `actor_id` для выбора пользовательского подключения;
 - проверка подписи, issuer, audience, срока жизни и scope токена;
@@ -44,9 +45,9 @@ MCP endpoint всегда требует OIDC Bearer token со scope `calendar:
 Для Docker/Kubernetes укажи JSON-массив разрешённых Host в `CALENDAR_MCP_ALLOWED_HOSTS` и адрес JWKS в
 `CALENDAR_OIDC_JWKS_URL`.
 
-Текущее memory-хранилище предназначено только для одного процесса и одной реплики. Не увеличивай
-число Uvicorn workers или Kubernetes replicas до появления общего хранилища либо реального
-календарного коннектора.
+Текущее memory-хранилище принадлежит только fake-провайдеру и предназначено для одного процесса и
+одной реплики. Не увеличивай число Uvicorn workers или Kubernetes replicas до появления общего
+хранилища либо реального календарного коннектора.
 
 `actor_id` не принимается от пользователя напрямую. Action Service берёт его из сохранённого Action,
 а MCP Gateway удаляет одноимённое поле из недоверенного input и добавляет trusted context. Fake

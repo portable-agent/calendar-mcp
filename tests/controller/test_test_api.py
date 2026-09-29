@@ -6,6 +6,7 @@ from mcp.server.auth.settings import AuthSettings
 from pydantic import AnyHttpUrl
 
 from portable_agent_calendar.controller.app import build_app
+from portable_agent_calendar.provider.fake_calendar import FakeCalendar
 from portable_agent_calendar.repository.memory_calendar_repository import MemoryCalendarRepository
 from portable_agent_calendar.service.calendar_service import CalendarService
 from tests.factories import event_data
@@ -26,7 +27,7 @@ class AcceptTokenVerifier:
 
 def test_find_events_when_test_api_is_enabled_should_return_camel_case_data() -> None:
     repository = MemoryCalendarRepository()
-    service = CalendarService(repository)
+    service = CalendarService(FakeCalendar(repository))
     app = build_app(
         service,
         repository,
@@ -64,7 +65,7 @@ def test_find_events_when_test_api_is_enabled_should_return_camel_case_data() ->
 
 def test_find_events_when_test_api_is_disabled_should_return_not_found() -> None:
     repository = MemoryCalendarRepository()
-    app = build_app(CalendarService(repository), repository, test_api_enabled=False)
+    app = build_app(CalendarService(FakeCalendar(repository)), repository, test_api_enabled=False)
 
     with TestClient(app) as client:
         response = client.get("/test/events", params={"requestKey": "request-123"})
@@ -75,7 +76,7 @@ def test_find_events_when_test_api_is_disabled_should_return_not_found() -> None
 def test_find_events_when_test_key_is_wrong_should_reject_request() -> None:
     repository = MemoryCalendarRepository()
     app = build_app(
-        CalendarService(repository),
+        CalendarService(FakeCalendar(repository)),
         repository,
         test_api_enabled=True,
         test_api_key="local-test-key",
@@ -94,7 +95,7 @@ def test_find_events_when_test_key_is_wrong_should_reject_request() -> None:
 def test_find_events_when_test_key_is_missing_should_reject_request() -> None:
     repository = MemoryCalendarRepository()
     app = build_app(
-        CalendarService(repository),
+        CalendarService(FakeCalendar(repository)),
         repository,
         test_api_enabled=True,
         test_api_key="local-test-key",
@@ -108,7 +109,7 @@ def test_find_events_when_test_key_is_missing_should_reject_request() -> None:
 
 def test_mcp_when_host_is_not_allowed_should_reject_request() -> None:
     repository = MemoryCalendarRepository()
-    app = build_app(CalendarService(repository), repository, test_api_enabled=False)
+    app = build_app(CalendarService(FakeCalendar(repository)), repository, test_api_enabled=False)
 
     with TestClient(app) as client:
         response = client.post("/mcp", headers={"host": "evil.example"}, json={})
@@ -119,7 +120,7 @@ def test_mcp_when_host_is_not_allowed_should_reject_request() -> None:
 def test_mcp_when_token_is_valid_should_use_tenant_from_token() -> None:
     repository = MemoryCalendarRepository()
     app = build_app(
-        CalendarService(repository),
+        CalendarService(FakeCalendar(repository)),
         repository,
         test_api_enabled=False,
         auth=AuthSettings(

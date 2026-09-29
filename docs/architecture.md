@@ -8,6 +8,7 @@ sequenceDiagram
     participant OIDC as Keycloak
     participant MCP as MCP controller
     participant Service as CalendarService
+    participant Provider as FakeCalendar
     participant Repo as CalendarRepository
 
     Worker->>MCP: tools/call create_event + Bearer token
@@ -15,13 +16,15 @@ sequenceDiagram
     OIDC-->>MCP: Публичный ключ
     Note over MCP: tenant_id берётся только из token claim
     MCP->>Service: create(NewEvent)
-    Service->>Repo: find(tenant_id, request_key)
+    Service->>Provider: create(NewEvent)
+    Provider->>Repo: find(tenant_id, request_key)
     alt Событие уже есть
-        Repo-->>Service: старое событие
+        Repo-->>Provider: старое событие
     else Новая команда
-        Service->>Repo: save_if_missing(event)
-        Repo-->>Service: сохранённое событие
+        Provider->>Repo: save_if_missing(event)
+        Repo-->>Provider: сохранённое событие
     end
+    Provider-->>Service: CalendarEvent
     Service-->>MCP: CalendarEvent
     MCP-->>Worker: result.eventId
 ```
@@ -29,14 +32,15 @@ sequenceDiagram
 ## Зависимости папок
 
 ```text
-controller -> service -> repository
-     |           |           |
-     v           v           v
-  MCP/HTTP     model      connector
+controller -> service -> provider -> repository
+     |           |          |            |
+     v           v          v            v
+  MCP/HTTP     model     calendar    fake storage
 ```
 
-`model` не импортирует MCP или FastAPI. `service` не знает о HTTP. `repository` отвечает за атомарное
-`save_if_missing`, поэтому два одинаковых запуска не создают две встречи.
+`model` не импортирует MCP или FastAPI. `service` не знает о HTTP и конкретном календаре. Provider
+реализует поведение календаря. Repository fake-провайдера отвечает за атомарное `save_if_missing`,
+поэтому два одинаковых запуска не создают две встречи.
 
 ## Почему request_key обязателен
 
