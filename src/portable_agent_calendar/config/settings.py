@@ -1,4 +1,6 @@
-from pydantic import AnyHttpUrl, Field, model_validator
+from typing import Literal
+
+from pydantic import AnyHttpUrl, Field, PositiveFloat, model_validator
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
 
@@ -7,6 +9,11 @@ class Settings(BaseSettings):
 
     test_api_enabled: bool = False
     test_api_key: str | None = None
+    provider: Literal["fake-calendar", "google-calendar"] = "fake-calendar"
+    connection_url: AnyHttpUrl = AnyHttpUrl("http://localhost:18088")
+    google_api_url: AnyHttpUrl = AnyHttpUrl("https://www.googleapis.com/calendar/v3")
+    remote_connect_timeout: PositiveFloat = 3.0
+    remote_read_timeout: PositiveFloat = 10.0
     oidc_issuer_url: AnyHttpUrl = AnyHttpUrl("http://localhost:8081/realms/portable-agent")
     oidc_jwks_url: AnyHttpUrl = AnyHttpUrl(
         "http://localhost:8081/realms/portable-agent/protocol/openid-connect/certs"

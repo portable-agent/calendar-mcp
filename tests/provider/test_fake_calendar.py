@@ -12,8 +12,8 @@ from tests.factories import event_data
 async def test_create_when_request_is_repeated_should_return_same_event() -> None:
     provider = FakeCalendar(MemoryCalendarRepository())
 
-    first = await provider.create(event_data())
-    second = await provider.create(event_data())
+    first = await provider.create(event_data(), "service-token")
+    second = await provider.create(event_data(), "service-token")
 
     assert second == first
 
@@ -24,7 +24,8 @@ async def test_create_when_requests_run_together_should_save_one_event() -> None
     provider = FakeCalendar(repository)
 
     first, second = await asyncio.gather(
-        provider.create(event_data()), provider.create(event_data())
+        provider.create(event_data(), "service-token"),
+        provider.create(event_data(), "service-token"),
     )
 
     assert first == second
@@ -34,8 +35,8 @@ async def test_create_when_requests_run_together_should_save_one_event() -> None
 @pytest.mark.anyio
 async def test_create_when_same_key_has_other_data_should_reject_request() -> None:
     provider = FakeCalendar(MemoryCalendarRepository())
-    await provider.create(event_data())
+    await provider.create(event_data(), "service-token")
     changed = event_data().with_title("Другая встреча")
 
     with pytest.raises(RequestKeyConflictError):
-        await provider.create(changed)
+        await provider.create(changed, "service-token")

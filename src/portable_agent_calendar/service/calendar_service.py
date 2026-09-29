@@ -7,5 +7,5 @@ class CalendarService:
     def __init__(self, provider: CalendarProvider) -> None:
         self._provider = provider
 
-    async def create(self, data: NewEvent) -> CalendarEvent:
-        return await self._provider.create(data)
+    async def create(self, data: NewEvent, service_token: str) -> CalendarEvent:
+        return await self._provider.create(data, service_token)

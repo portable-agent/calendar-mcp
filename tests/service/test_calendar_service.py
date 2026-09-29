@@ -15,7 +15,7 @@ async def test_create_should_use_selected_provider() -> None:
     provider.create.return_value = expected
     service = CalendarService(provider)
 
-    result = await service.create(data)
+    result = await service.create(data, "service-token")
 
     assert result == expected
-    provider.create.assert_awaited_once_with(data)
+    provider.create.assert_awaited_once_with(data, "service-token")

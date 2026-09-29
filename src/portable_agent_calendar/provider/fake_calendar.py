@@ -10,7 +10,7 @@ class FakeCalendar:
     def __init__(self, repository: CalendarRepository) -> None:
         self._repository = repository
 
-    async def create(self, data: NewEvent) -> CalendarEvent:
+    async def create(self, data: NewEvent, service_token: str) -> CalendarEvent:
         old_event = await self._repository.find(data.tenant_id, data.request_key)
         if old_event is not None:
             return self._same_event(old_event, data)

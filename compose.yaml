@@ -4,6 +4,9 @@ services:
     environment:
       CALENDAR_TEST_API_ENABLED: "true"
       CALENDAR_TEST_API_KEY: ${CALENDAR_TEST_API_KEY:?set CALENDAR_TEST_API_KEY}
+      CALENDAR_PROVIDER: ${CALENDAR_PROVIDER:-fake-calendar}
+      CALENDAR_CONNECTION_URL: ${CALENDAR_CONNECTION_URL:-http://host.docker.internal:18088}
+      CALENDAR_GOOGLE_API_URL: ${CALENDAR_GOOGLE_API_URL:-https://www.googleapis.com/calendar/v3}
       CALENDAR_MCP_ALLOWED_HOSTS: '["calendar-mcp:*","127.0.0.1:*","localhost:*"]'
       CALENDAR_OIDC_JWKS_URL: http://host.docker.internal:8081/realms/portable-agent/protocol/openid-connect/certs
     ports:

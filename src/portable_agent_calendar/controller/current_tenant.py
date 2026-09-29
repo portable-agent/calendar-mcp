@@ -13,3 +13,10 @@ def current_tenant() -> str:
         return str(UUID(value))
     except ValueError as error:
         raise ToolError("Authenticated tenant is invalid") from error
+
+
+def current_service_token() -> str:
+    token = get_access_token()
+    if token is None or not token.token:
+        raise ToolError("Authenticated service token is missing")
+    return token.token

@@ -21,6 +21,7 @@ def build_server(
     service: CalendarService,
     *,
     current_tenant: Callable[[], str],
+    current_token: Callable[[], str],
     auth: AuthSettings | None = None,
     token_verifier: TokenVerifier | None = None,
 ) -> MCPServer:
@@ -65,7 +66,8 @@ def build_server(
                     actor_id=actor_id,
                     description=description,
                     attendees=attendees,
-                )
+                ),
+                current_token(),
             )
         except ValueError as error:
             raise ToolError(str(error)) from error

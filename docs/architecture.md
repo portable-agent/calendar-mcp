@@ -55,6 +55,21 @@ Temporal может повторить activity после сетевой оши
 `actor_id` передаётся отдельно от бизнес-payload как trusted execution context. Он может отсутствовать
 у старого fake-вызова, но Google provider обязан отклонить выполнение без владельца подключения.
 
+## Google provider
+
+`GoogleCalendar` получает делегированный service JWT текущего MCP-вызова. Он передаёт JWT во
+внутренний endpoint Connection Service вместе с доверенным `actor_id`. Tenant не дублируется в body:
+Connection Service читает его из проверенного JWT. В ответ Calendar MCP получает только
+короткоживущий Google access token; refresh token никогда не покидает Connection Service.
+
+Идентификатор Google-события вычисляется как SHA-256 от `tenant_id + actor_id + request_key` и
+кодируется в base32hex. Повторная вставка получает `409`, после чего provider читает событие по тому
+же ID и возвращает прежний результат. Автоматического повтора неизвестной сетевой ошибки нет — его
+делает Temporal с тем же `request_key`.
+
+Provider выбирается конфигурацией процесса. `fake-calendar` остаётся детерминированным вариантом для
+CI, а `google-calendar` используется для ручного sandbox N2N и дальнейших окружений.
+
 Memory repository обеспечивает атомарность только внутри одного процесса. Пока он используется,
 разрешены один Uvicorn worker и одна реплика сервиса. Масштабирование начнётся после подключения общего
 хранилища или провайдера с idempotency key.

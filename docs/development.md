@@ -23,7 +23,8 @@ MCP Inspector можно подключить к `http://localhost:8080/mcp`.
 3. Refactor — код упрощается без изменения поведения.
 
 Большинство тестов проверяют model и service без сети. MCP-тест использует официальный `Client(server)`
-в памяти. HTTP-тест проверяет только health и локальный test API.
+в памяти. HTTP-тест проверяет только health и локальный test API. Клиенты Connection Service и Google
+Calendar проверяются через `httpx.MockTransport`, поэтому unit-тестам не нужны сеть и секреты.
 
 ## Проверки перед PR
 
