@@ -22,6 +22,14 @@ GET /health
 Если сервер отвечает `421`, добавь точный Host или шаблон порта `name:*` в JSON-массиве
 `CALENDAR_MCP_ALLOWED_HOSTS`. Не отключай DNS-rebinding protection целиком.
 
+## Google Calendar
+
+1. Проверь `CALENDAR_PROVIDER=google-calendar` и адрес `CALENDAR_CONNECTION_URL`.
+2. Для `connection_required` подключи Google Calendar через публичный API Connection Service.
+3. Для `connection_ambiguous` не выбирай аккаунт скрытно: пользователь должен выбрать default.
+4. Проверь audience `connection-service`, scope `connection:token` и разрешённый `azp` service JWT.
+5. Не копируй access token, refresh token или тело ответа Google в issue и логи.
+
 ## Не найден часовой пояс
 
 Сервис использует IANA-имена, например `Europe/Moscow` или `UTC`. Пакет `tzdata` закреплён в `uv.lock`,

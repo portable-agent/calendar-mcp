@@ -13,6 +13,9 @@
 | HTTP | `/health` | Проверка процесса |
 | HTTP, только test mode | `/test/events` | Проверка fake-событий в acceptance-тесте |
 
+Исходящий internal HTTP-контракт Connection Service берётся из `portable-agent/contracts` v2.7.0.
+Клиент использует только `POST /internal/v1/tokens`; отдельная копия DTO в сервисе не создаётся.
+
 ## Что сервис делает
 
 - получает `tenant_id` только из проверенного OIDC-токена;
@@ -31,9 +34,14 @@
 
 ## Текущее состояние
 
-Работает `FakeCalendar` с memory-хранилищем. Он предназначен для CI и локальной разработки с одним
-процессом. Google provider и запрос короткоживущего access token у Connection Service будут добавлены
-отдельным пакетом.
+Работают две стратегии:
+
+- `FakeCalendar` с memory-хранилищем для CI и локальной разработки;
+- `GoogleCalendar`, который получает короткоживущий access token у Connection Service и вызывает
+  Google Calendar API.
+
+Стратегия выбирается через `CALENDAR_PROVIDER`. Google provider требует `actor_id`, не хранит token и
+использует стабильный base32hex event ID для безопасного повтора команды.
 
 ## Настройки и проверки
 

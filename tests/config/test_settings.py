@@ -36,3 +36,20 @@ def test_settings_when_hosts_are_given_should_read_json_list(
     monkeypatch.setenv("CALENDAR_MCP_ALLOWED_HOSTS", '["calendar-mcp:*"]')
 
     assert Settings().mcp_allowed_hosts == ["calendar-mcp:*"]
+
+
+def test_settings_when_provider_is_missing_should_use_fake_calendar(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    monkeypatch.delenv("CALENDAR_PROVIDER", raising=False)
+
+    assert Settings().provider == "fake-calendar"
+
+
+def test_settings_when_provider_is_unknown_should_reject_config(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    monkeypatch.setenv("CALENDAR_PROVIDER", "unknown")
+
+    with pytest.raises(ValueError, match="provider"):
+        Settings()

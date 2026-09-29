@@ -7,7 +7,7 @@ from mcp.server.auth.settings import AuthSettings
 from mcp.server.transport_security import TransportSecuritySettings
 
 from portable_agent_calendar.controller.calendar_mcp import build_server
-from portable_agent_calendar.controller.current_tenant import current_tenant
+from portable_agent_calendar.controller.current_tenant import current_service_token, current_tenant
 from portable_agent_calendar.model.calendar_event import CalendarEvent
 from portable_agent_calendar.repository.calendar_repository import CalendarRepository
 from portable_agent_calendar.service.calendar_service import CalendarService
@@ -35,6 +35,7 @@ def build_app(
     mcp_app = build_server(
         service,
         current_tenant=current_tenant,
+        current_token=current_service_token,
         auth=auth,
         token_verifier=token_verifier,
     ).streamable_http_app(

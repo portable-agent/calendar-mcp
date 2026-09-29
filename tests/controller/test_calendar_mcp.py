@@ -14,6 +14,7 @@ async def test_create_event_when_input_is_valid_should_return_event_id() -> None
     server = build_server(
         CalendarService(FakeCalendar(repository)),
         current_tenant=lambda: "81410813-f15f-4204-b9f5-53c30f465ffc",
+        current_token=lambda: "service-token",
     )
 
     async with Client(server, raise_exceptions=True) as client:
@@ -41,6 +42,7 @@ async def test_list_tools_should_publish_only_create_event() -> None:
     server = build_server(
         CalendarService(FakeCalendar(MemoryCalendarRepository())),
         current_tenant=lambda: "81410813-f15f-4204-b9f5-53c30f465ffc",
+        current_token=lambda: "service-token",
     )
 
     async with Client(server, raise_exceptions=True) as client:
@@ -66,6 +68,7 @@ async def test_create_event_when_time_is_invalid_should_return_safe_error() -> N
     server = build_server(
         CalendarService(FakeCalendar(MemoryCalendarRepository())),
         current_tenant=lambda: "81410813-f15f-4204-b9f5-53c30f465ffc",
+        current_token=lambda: "service-token",
     )
 
     async with Client(server, raise_exceptions=True) as client:

@@ -20,7 +20,8 @@ Test API `/test/events` включается только переменной `
 встречи в обычные логи.
 Не отключай MCP DNS-rebinding protection: внешние имена добавляются через `CALENDAR_MCP_ALLOWED_HOSTS`.
 Не принимай `tenant_id` аргументом MCP tool: identity приходит только из проверенного OIDC-токена.
-Memory repository разрешает только один процесс и одну реплику.
+Memory repository fake-провайдера разрешает только один процесс и одну реплику. Google provider не
+должен хранить access token и не должен писать token либо response body в лог.
 
 ## Простые имена
 

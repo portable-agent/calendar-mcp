@@ -34,7 +34,7 @@ def test_find_events_when_test_api_is_enabled_should_return_camel_case_data() ->
         test_api_enabled=True,
         test_api_key="local-test-key",
     )
-    event_id = asyncio.run(service.create(event_data())).event_id
+    event_id = asyncio.run(service.create(event_data(), "service-token")).event_id
 
     with TestClient(app) as client:
         health = client.get("/health")

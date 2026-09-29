@@ -1,15 +1,15 @@
 from mcp.server.auth.settings import AuthSettings
 
 from portable_agent_calendar.config.oidc_token_verifier import OidcTokenVerifier
+from portable_agent_calendar.config.provider_factory import build_provider
 from portable_agent_calendar.config.settings import Settings
 from portable_agent_calendar.controller.app import build_app
-from portable_agent_calendar.provider.fake_calendar import FakeCalendar
 from portable_agent_calendar.repository.memory_calendar_repository import MemoryCalendarRepository
 from portable_agent_calendar.service.calendar_service import CalendarService
 
-repository = MemoryCalendarRepository()
-service = CalendarService(FakeCalendar(repository))
 settings = Settings()
+repository = MemoryCalendarRepository()
+service = CalendarService(build_provider(settings, repository))
 token_verifier = OidcTokenVerifier(
     issuer=str(settings.oidc_issuer_url),
     jwks_url=str(settings.oidc_jwks_url),
