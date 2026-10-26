@@ -1,5 +1,6 @@
 import base64
 import hashlib
+from datetime import datetime
 from typing import Any
 
 import httpx
@@ -67,8 +68,11 @@ class GoogleCalendar:
         body: dict[str, Any] = {
             "id": event_id,
             "summary": data.title,
-            "start": {"dateTime": data.start_at, "timeZone": data.time_zone},
-            "end": {"dateTime": data.end_at, "timeZone": data.time_zone},
+            "start": {
+                "dateTime": GoogleCalendar._time(data.start_time),
+                "timeZone": data.time_zone,
+            },
+            "end": {"dateTime": GoogleCalendar._time(data.end_time), "timeZone": data.time_zone},
             "extendedProperties": {
                 "private": {
                     "requestHash": hashlib.sha256(data.request_key.encode()).hexdigest(),
@@ -80,6 +84,12 @@ class GoogleCalendar:
         if data.attendees:
             body["attendees"] = [{"email": email} for email in data.attendees]
         return body
+
+    @staticmethod
+    def _time(value: datetime) -> str:
+        # Google Calendar requires seconds in RFC 3339 timestamps.
+        precision = "microseconds" if value.microsecond else "seconds"
+        return value.isoformat(timespec=precision)
 
     @staticmethod
     def _json(response: httpx.Response) -> dict[str, Any]:

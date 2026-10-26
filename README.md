@@ -11,6 +11,7 @@ MCP-сервис календаря для Portable Agent. Он принимае
 - MCP tool `create_event`;
 - отдельная стратегия `FakeCalendar`, которую можно заменить без изменения use case;
 - стратегия `GoogleCalendar` с детерминированным event ID и защитой от дублей;
+- приведение времени без секунд к формату Google Calendar с секундами перед отправкой;
 - запрос короткоживущего Google access token у Connection Service;
 - tenant из проверенного OIDC-токена и обязательный `request_key`;
 - необязательный доверенный `actor_id` для выбора пользовательского подключения;
