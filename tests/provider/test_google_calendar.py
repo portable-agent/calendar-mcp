@@ -51,6 +51,35 @@ async def test_create_should_get_user_token_and_send_google_event() -> None:
 
 
 @pytest.mark.anyio
+async def test_create_with_minutes_only_should_send_seconds_to_google() -> None:
+    requests: list[httpx.Request] = []
+
+    async def answer(request: httpx.Request) -> httpx.Response:
+        requests.append(request)
+        return httpx.Response(200, json={"id": "google-event-id"})
+
+    token_client = AsyncMock()
+    token_client.get.return_value = "google-access-token"
+    provider = GoogleCalendar(
+        token_client,
+        "https://www.googleapis.com/calendar/v3",
+        transport=httpx.MockTransport(answer),
+    )
+    data = replace(
+        event_data(),
+        actor_id=ACTOR_ID,
+        start_at="2026-09-08T12:00+03:00",
+        end_at="2026-09-08T12:30+03:00",
+    )
+
+    await provider.create(data, "service-token")
+
+    body = json.loads(requests[0].content)
+    assert body["start"]["dateTime"] == "2026-09-08T12:00:00+03:00"
+    assert body["end"]["dateTime"] == "2026-09-08T12:30:00+03:00"
+
+
+@pytest.mark.anyio
 async def test_create_when_event_exists_should_return_same_event() -> None:
     paths: list[str] = []
 
